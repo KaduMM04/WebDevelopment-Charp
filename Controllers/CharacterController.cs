@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using ProjetoDBZ.Data;
 using ProjetoDBZ.Models;
 
@@ -25,5 +26,17 @@ namespace ProjetoDBZ.Controllers
 
             return StatusCode(201, character);
         }
+
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Character>>> GetAllCharacters() {
+             var characters = await _appDbContext.Characters.ToListAsync();
+             return Ok(characters);
+        }
+
+        [HttpGet("/id")]
+         public async Task<ActionResult<Character>> GetCharacterById(int id) {
+            var character = await _appDbContext.Characters.FindAsync(id);
+            return StatusCode(200, character);
+         }    
     }
 }
