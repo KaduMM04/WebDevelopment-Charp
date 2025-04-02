@@ -27,7 +27,7 @@ namespace ProjetoDBZ.Controllers
             return StatusCode(201, character);
         }
 
-        [HttpGet]
+        [HttpGet("/GetAllCharacters")]
         public async Task<ActionResult<IEnumerable<Character>>> GetAllCharacters() {
              var characters = await _appDbContext.Characters.ToListAsync();
              return Ok(characters);
@@ -37,6 +37,21 @@ namespace ProjetoDBZ.Controllers
          public async Task<ActionResult<Character>> GetCharacterById(int id) {
             var character = await _appDbContext.Characters.FindAsync(id);
             return StatusCode(200, character);
+         }
+
+         [HttpPut("/id")]
+         public async Task<ActionResult<Character>> UpdateCharacterById(int id, Character updatedCharacter) {
+
+            var existingCharacter =  await _appDbContext.Characters.FindAsync(id);
+            if (existingCharacter == null) {
+                return NotFound();
+            }
+  
+            existingCharacter.Name = updatedCharacter.Name;
+            existingCharacter.Type = updatedCharacter.Type;
+
+            await _appDbContext.SaveChangesAsync();
+            return Ok(updatedCharacter);
          }    
     }
 }
