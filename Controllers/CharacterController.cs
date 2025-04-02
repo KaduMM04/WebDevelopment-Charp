@@ -33,13 +33,17 @@ namespace ProjetoDBZ.Controllers
              return Ok(characters);
         }
 
-        [HttpGet("/id")]
+        [HttpGet("/GetCharacterByid")]
          public async Task<ActionResult<Character>> GetCharacterById(int id) {
+
             var character = await _appDbContext.Characters.FindAsync(id);
+            if (character == null) {
+                return NotFound();
+            }
             return StatusCode(200, character);
          }
 
-         [HttpPut("/id")]
+         [HttpPut("/PutCharacterByid")]
          public async Task<ActionResult<Character>> UpdateCharacterById(int id, Character updatedCharacter) {
 
             var existingCharacter =  await _appDbContext.Characters.FindAsync(id);
@@ -53,5 +57,16 @@ namespace ProjetoDBZ.Controllers
             await _appDbContext.SaveChangesAsync();
             return Ok(updatedCharacter);
          }    
+
+         [HttpDelete("/DeleteCharacterById")]
+         public async Task<IActionResult> DeleteCharacterById(int id) {
+
+            if (await _appDbContext.Characters.FindAsync(id) is Character character) {
+                    _appDbContext.Characters.Remove(character);
+                    await _appDbContext.SaveChangesAsync();
+                    return NoContent();
+            }
+            return NotFound();
+         }
     }
 }
