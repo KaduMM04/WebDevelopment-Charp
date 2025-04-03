@@ -38,7 +38,7 @@ namespace ProjetoDBZ.Controllers
 
             var character = await _appDbContext.Characters.FindAsync(id);
             if (character == null) {
-                return NotFound();
+                return NotFound("Character not found!");
             }
             return StatusCode(200, character);
          }
@@ -48,7 +48,7 @@ namespace ProjetoDBZ.Controllers
 
             var existingCharacter =  await _appDbContext.Characters.FindAsync(id);
             if (existingCharacter == null) {
-                return NotFound();
+                return NotFound("Character not found!");
             }
   
             existingCharacter.Name = updatedCharacter.Name;
@@ -66,7 +66,7 @@ namespace ProjetoDBZ.Controllers
                     await _appDbContext.SaveChangesAsync();
                     return NoContent();
             }
-            return NotFound();
+            return NotFound("Character not found!");
          }
     }
 }
