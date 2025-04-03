@@ -33,7 +33,7 @@ namespace ProjetoDBZ.Controllers
              return Ok(characters);
         }
 
-        [HttpGet("/GetCharacterByid")]
+        [HttpGet("{id}")]
          public async Task<ActionResult<Character>> GetCharacterById(int id) {
 
             var character = await _appDbContext.Characters.FindAsync(id);
@@ -43,23 +43,26 @@ namespace ProjetoDBZ.Controllers
             return StatusCode(200, character);
          }
 
-         [HttpPut("/PutCharacterByid")]
-         public async Task<ActionResult<Character>> UpdateCharacterById(int id, Character updatedCharacter) {
+         [HttpPut("/{id}")]
+         public async Task<IActionResult> UpdateCharacterById(int id, Character updatedCharacter) {
 
             var existingCharacter =  await _appDbContext.Characters.FindAsync(id);
             if (existingCharacter == null) {
                 return NotFound("Character not found!");
             }
-  
+
             existingCharacter.Name = updatedCharacter.Name;
             existingCharacter.Type = updatedCharacter.Type;
 
+            /*Another mode for update
+            _appDbContext.Entry(existingCharacter).CurrentValues.SetValues(updatedCharacter);
+            */
             await _appDbContext.SaveChangesAsync();
             return Ok(updatedCharacter);
          }    
 
-         [HttpDelete("/DeleteCharacterById")]
-         public async Task<IActionResult> DeleteCharacterById(int id) {
+         [HttpDelete("/{id}")]
+         public async Task<ActionResult> DeleteCharacterById(int id) {
 
             if (await _appDbContext.Characters.FindAsync(id) is Character character) {
                     _appDbContext.Characters.Remove(character);
