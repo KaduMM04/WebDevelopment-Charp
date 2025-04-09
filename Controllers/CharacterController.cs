@@ -16,9 +16,10 @@ namespace ProjetoDBZ.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddCharacter(Character character) {
-            if (character == null) {
-                return BadRequest("tu é burro?");
+        public async Task<IActionResult> AddCharacter([FromBody] Character character) {
+
+            if (!ModelState.IsValid) {
+                return BadRequest(ModelState);
             }
 
             _appDbContext.Characters.Add(character);
@@ -44,19 +45,20 @@ namespace ProjetoDBZ.Controllers
          }
 
          [HttpPut("/{id}")]
-         public async Task<IActionResult> UpdateCharacterById(int id, Character updatedCharacter) {
+         public async Task<IActionResult> UpdateCharacterById(int id, [FromBody] Character updatedCharacter) {
 
             var existingCharacter =  await _appDbContext.Characters.FindAsync(id);
             if (existingCharacter == null) {
                 return NotFound("Character not found!");
             }
 
+            /*Another mode for update
             existingCharacter.Name = updatedCharacter.Name;
             existingCharacter.Type = updatedCharacter.Type;
-
-            /*Another mode for update
-            _appDbContext.Entry(existingCharacter).CurrentValues.SetValues(updatedCharacter);
             */
+            
+            _appDbContext.Entry(existingCharacter).CurrentValues.SetValues(updatedCharacter);
+            
             await _appDbContext.SaveChangesAsync();
             return Ok(updatedCharacter);
          }    
